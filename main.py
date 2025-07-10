@@ -13,10 +13,10 @@ class PredictionInput(BaseModel):
 with open('Random_forest_model.pkl', 'rb') as file:
     model = joblib.load(file)
 
-with open('Random_forest_model.pkl', 'rb') as file:
+with open('XGBOOST.pkl', 'rb') as file:
     model2 = joblib.load(file)
 
-@app.post("/predict")
+@app.post("/predict/happen")
 async def predict(input_data: PredictionInput):
     try:
         features = np.array([input_data.features])
