@@ -50,7 +50,7 @@ Uses an XGBoost model to predict damage levels or severity.
 **Response**:
 ```json
 {
-  "prediction": [2.5]
+  "prediction": [2]  "high risk"
 }
 ```
 
