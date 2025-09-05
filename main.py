@@ -10,10 +10,10 @@ class PredictionInput(BaseModel):
 
 
 # Load models
-with open('flood_prediction_model.pkl', 'rb') as file:
+with open('Random_forest_model.pkl', 'rb') as file:
     model = joblib.load(file)
 
-with open('flood_severity_model.pkl', 'rb') as file:
+with open('XGBOOST.pkl', 'rb') as file:
     model2 = joblib.load(file)
 
 def transform_features(features: list[float]) -> np.ndarray:
