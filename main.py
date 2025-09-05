@@ -44,6 +44,6 @@ async def predict_damage(input_data: PredictionInput):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@app.get("/health")
+@app.api_route("/health", methods=["GET", "HEAD"])
 async def health_check():
     return {"status": "alive", "service": "flood-disaster-management"}
