@@ -5,31 +5,45 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
-# Define input data model
 class PredictionInput(BaseModel):
     features: list[float]
 
-# Load the model
-with open('Random_forest_model.pkl', 'rb') as file:
+
+# Load models
+with open('flood_prediction_model.pkl', 'rb') as file:
     model = joblib.load(file)
 
-with open('XGBOOST.pkl', 'rb') as file:
+with open('flood_severity_model.pkl', 'rb') as file:
     model2 = joblib.load(file)
 
+def transform_features(features: list[float]) -> np.ndarray:
+    """Convert lat/lon to sin/cos and keep rest of features."""
+    lat, lon = features[0], features[1]
+    lat_sin, lat_cos = np.sin(np.radians(lat)), np.cos(np.radians(lat))
+    lon_sin, lon_cos = np.sin(np.radians(lon)), np.cos(np.radians(lon))
+
+    # Build final array
+    arr = [lat_sin, lat_cos, lon_sin, lon_cos] + features[2:]
+    return np.array(arr).reshape(1, -1)
+
 @app.post("/predict/happen")
-async def predict(input_data: PredictionInput):
+async def predict_happen(input_data: PredictionInput):
     try:
-        features = np.array([input_data.features])
-        prediction = model.predict(features)
+        arr = transform_features(input_data.features)
+        prediction = model.predict(arr)
         return {"prediction": prediction.tolist()}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 @app.post("/predict/damage")
-async def predict(input_data: PredictionInput):
+async def predict_damage(input_data: PredictionInput):
     try:
-        features = np.array([input_data.features])
-        prediction = model2.predict(features)
+        arr = transform_features(input_data.features)
+        prediction = model2.predict(arr)  # <- Correct model used
         return {"prediction": prediction.tolist()}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/health")
+async def health_check():
+    return {"status": "alive", "service": "flood-disaster-management"}
