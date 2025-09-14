@@ -23,7 +23,8 @@ def transform_features(features: list[float]) -> np.ndarray:
     lon_sin, lon_cos = np.sin(np.radians(lon)), np.cos(np.radians(lon))
 
     # Build final array
-    arr = [lat_sin, lat_cos, lon_sin, lon_cos] + features[2:]
+    # arr = [lat_sin, lat_cos, lon_sin, lon_cos] + features[2:]
+    arr = features
     return np.array(arr).reshape(1, -1)
 
 @app.post("/predict/happen")
